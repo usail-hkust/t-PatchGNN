@@ -20,7 +20,7 @@ For Physionet and Human Activity, our code will automatically download the raw d
 
 For USHCN, following the [GRU-ODE-Bayes](https://github.com/edebrouwer/gru_ode_bayes/tree/master), we use the same preprocessed data `small_chunked_sporadic.csv` as the raw data.
 
-For MIMIC3, you need to first have an access to MIMIC-III Dataset, which can be requested [here](https://mimic.physionet.org/gettingstarted/access/). The database version we used here is v1.4. After downloading the raw data, following the preprocessing of [Neural Flows](https://github.com/mbilos/neural-flows-experiments/tree/master), you will finally get the `full_dataset.csv` which is used as the raw data in our experiment.
+For MIMIC, you need to first request the raw database from [here](https://mimic.physionet.org/gettingstarted/access/). The database version we used here is v1.4. After downloading the raw data, following the preprocessing of [Neural Flows](https://github.com/mbilos/neural-flows-experiments/tree/master), you will finally get the `full_dataset.csv` which is used as the raw data in our experiment.
 
 ## Run the Model
 
