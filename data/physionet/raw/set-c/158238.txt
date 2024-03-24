@@ -1,0 +1,8 @@
+Time,Parameter,Value
+00:00,RecordID,158238
+00:00,Age,66
+00:00,Gender,1
+00:00,Height,177.8
+00:00,ICUType,2
+00:00,Weight,90
+03:11,MechVent,1

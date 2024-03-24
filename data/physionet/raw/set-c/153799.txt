@@ -1,0 +1,17 @@
+Time,Parameter,Value
+00:00,RecordID,153799
+00:00,Age,61
+00:00,Gender,0
+00:00,Height,-1
+00:00,ICUType,1
+00:00,Weight,-1
+18:21,BUN,14
+18:21,Creatinine,0.6
+18:21,Glucose,100
+18:21,HCO3,26
+18:21,HCT,37.1
+18:21,Mg,2
+18:21,Platelets,378
+18:21,K,4
+18:21,Na,144
+18:21,WBC,5.2

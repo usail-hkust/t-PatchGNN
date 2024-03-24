@@ -1,8 +1,0 @@
-numpy
-sklearn
-tqdm
-torch==2.0.0
-pandas
-matplotlib
-psycopg2
-scipy

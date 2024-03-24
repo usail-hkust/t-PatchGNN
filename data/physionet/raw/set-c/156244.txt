@@ -1,0 +1,14 @@
+Time,Parameter,Value
+00:00,RecordID,156244
+00:00,Age,59
+00:00,Gender,-1
+00:00,Height,-1
+00:00,ICUType,2
+00:00,Weight,-1
+00:34,pH,7.28
+00:34,PaCO2,30
+00:34,PaO2,206
+01:20,pH,7.33
+01:20,Lactate,20
+01:20,PaCO2,34
+01:20,PaO2,88
