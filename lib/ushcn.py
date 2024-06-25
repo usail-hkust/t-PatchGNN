@@ -129,16 +129,10 @@ def USHCN_patch_variable_time_collate_fn(batch, args, device = torch.device("cpu
 	D = batch[0][2].shape[1]
 	# combined_tt shape is (T_o, )
 	combined_tt, inverse_indices = torch.unique(torch.cat([ex[1] for ex in batch]), sorted=True, return_inverse=True)
-	# print(combined_tt.max(), combined_tt.min())
-	# print(inverse_indices.shape, np.sum([len(ex[1]) for ex in batch]), inverse_indices.max())
-	# print(inverse_indices)
 
 	# the number of observed time points 
 	n_observed_tp = torch.lt(combined_tt, args.history).sum()
 	observed_tp = combined_tt[:n_observed_tp] # (n_observed_tp, )
-	# print(n_observed_tp, len(combined_tt)-n_observed_tp)
-	# print(combined_tt[:n_observed_tp])
-	# print(combined_tt[n_observed_tp:])
 
 	patch_indices = []
 	st, ed = 0, args.patch_size
@@ -199,15 +193,10 @@ def USHCN_patch_variable_time_collate_fn(batch, args, device = torch.device("cpu
 	data_dict = utils.split_and_patch_batch(data_dict, args, n_observed_tp, patch_indices)
 	# print("patchdata:", data_dict["data_to_predict"].sum(), data_dict["mask_predicted_data"].sum())
 
-	# print(batch_t_bias.shape, data_dict["observed_tp"].shape, data_dict["tp_to_predict"].shape)
 	data_dict["observed_tp"] = data_dict["observed_tp"] + batch_t_bias.view(len(batch_t_bias), 1, 1, 1)
-	# data_dict["observed_tp"] = data_dict["observed_tp"] * (data_dict["mask_predicted_data"].sum(dim=-1)>1e-8)
 
 	data_dict["tp_to_predict"] = data_dict["tp_to_predict"] + batch_t_bias.view(len(batch_t_bias), 1)
 	data_dict["tp_to_predict"][data_dict["mask_predicted_data"].sum(dim=-1)<1e-8] = 0
-	# delta = data_dict["tp_to_predict"].view(len(batch_t_bias),-1).max(dim=-1)[0] - data_dict["observed_tp"].view(len(batch_t_bias),-1).min(dim=-1)[0]
-	# delta = data_dict["tp_to_predict"].view(len(batch_t_bias),-1).min(dim=-1)[0] - data_dict["observed_tp"].view(len(batch_t_bias),-1).max(dim=-1)[0]
-	# print((delta*48).max(), (delta*48).min())
 
 	return data_dict
 
@@ -226,20 +215,15 @@ def USHCN_variable_time_collate_fn(batch, args, device = torch.device("cpu"), da
 		batch_mask: (B, L, D) tensor containing 1 where values were observed and 0 otherwise.
 	"""
 
-	# n_observed_tps = []
 	observed_tp = []
 	observed_data = []
 	observed_mask = [] 
 	predicted_tp = []
 	predicted_data = []
 	predicted_mask = [] 
-	# batch_t_bias = []
 
 	for b, (record_id, tt, vals, mask, t_bias) in enumerate(batch):
-		# batch_t_bias.append(t_bias)
 		n_observed_tp = torch.lt(tt, args.history).sum()
-		# print(len(tt), n_observed_tp)
-		# n_observed_tps.append(n_observed_tp)
 		tt = tt + t_bias
 		observed_tp.append(tt[:n_observed_tp])
 		observed_data.append(vals[:n_observed_tp])
@@ -255,23 +239,9 @@ def USHCN_variable_time_collate_fn(batch, args, device = torch.device("cpu"), da
 	predicted_tp = pad_sequence(predicted_tp, batch_first=True)
 	predicted_data = pad_sequence(predicted_data, batch_first=True)
 	predicted_mask = pad_sequence(predicted_mask, batch_first=True)
-	# print(observed_tp.shape, observed_data.shape, observed_mask.shape,\
-	#     predicted_tp.shape, predicted_data.shape, predicted_mask.shape)
 	
 	observed_tp = utils.normalize_masked_tp(observed_tp, att_min = 0, att_max = time_max)
 	predicted_tp = utils.normalize_masked_tp(predicted_tp, att_min = 0, att_max = time_max)
-	# print(predicted_data.sum(), predicted_tp.sum())
-	# batch_t_bias = torch.stack(batch_t_bias) # (n_batch, )
-	# batch_t_bias = utils.normalize_masked_tp(batch_t_bias, att_min = 0, att_max = time_max)
-
-	# print(observed_tp.max())
-	# print(predicted_tp.max())
-
-	# print(batch_t_bias.shape, observed_tp.shape, predicted_tp.shape)
-	# observed_tp = observed_tp + batch_t_bias.view(len(batch_t_bias), 1)
-	# observed_tp[observed_mask.sum(dim=-1)<1e-8] = 0
-	# predicted_tp = predicted_tp + batch_t_bias.view(len(batch_t_bias), 1)
-	# predicted_tp[predicted_mask.sum(dim=-1)<1e-8] = 0
 		
 	data_dict = {"observed_data": observed_data,
 			"observed_tp": observed_tp,
@@ -283,136 +253,6 @@ def USHCN_variable_time_collate_fn(batch, args, device = torch.device("cpu"), da
 	# print("vecdata:", data_dict["data_to_predict"].sum(), data_dict["mask_predicted_data"].sum())
 	
 	return data_dict
-
-
-
-def USHCN_variable_time_collate_fn_ODE(batch, args, device = torch.device("cpu"), data_type = "train", 
-	data_min = None, data_max = None, time_max = None):
-	"""
-	Expects a batch of time series data in the form of (record_id, tt, vals, mask) where
-		- record_id is a patient id
-		- tt is a 1-dimensional tensor containing T time values of observations.
-		- vals is a (T, D) tensor containing observed values for D variables.
-		- mask is a (T, D) tensor containing 1 where values were observed and 0 otherwise.
-	Returns:
-		combined_tt: (T, ) The union of all time observations.
-		combined_vals: (M, T, D) tensor containing the observed values.
-		combined_mask: (M, T, D) tensor containing 1 where values were observed and 0 otherwise.
-	"""
-
-	D = batch[0][2].shape[1]
-	combined_tt, inverse_indices = torch.unique(torch.cat([ex[1] for ex in batch]), sorted=True, return_inverse=True)
-	combined_tt = combined_tt.to(device)
-	# the number of observed time points 
-	n_observed_tp = torch.lt(combined_tt, args.history).sum()
-
-	offset = 0
-	combined_vals = torch.zeros([len(batch), len(combined_tt), D]).to(device)
-	combined_mask = torch.zeros([len(batch), len(combined_tt), D]).to(device)
-	
-	# combined_labels = None
-	# N_labels = 1
-
-	# combined_labels = torch.zeros(len(batch), N_labels) + torch.tensor(float('nan'))
-	# combined_labels = combined_labels.to(device = device)
-	batch_t_bias = []
-	for b, (record_id, tt, vals, mask, t_bias) in enumerate(batch):
-		batch_t_bias.append(t_bias)
-
-		indices = inverse_indices[offset:offset+len(tt)]
-		offset += len(tt)
-
-		combined_vals[b, indices] = vals
-		combined_mask[b, indices] = mask
-
-		# if labels is not None:
-		# 	combined_labels[b] = labels
-
-
-	# if torch.max(combined_tt) != 0.:
-	# 	combined_tt = combined_tt / torch.max(combined_tt)
-	# if time_max != 0.:
-	# 	combined_tt = combined_tt / time_max
-	# else:
-	# 	raise Exception("Zero!")
-		
-	# print(1111,((combined_tt[:-1]-combined_tt[1:])>=0).sum())
-	# print(time_max)
-	# print(combined_tt)
-	combined_tt = utils.normalize_masked_tp(combined_tt.double(), att_min = 0, att_max = time_max)
-	# print(combined_tt)
-	# print(2222,((combined_tt[:-1]-combined_tt[1:])>=0).sum())
-	# print(combined_tt[:-1][((combined_tt[:-1]-combined_tt[1:])>=0)])
-	# print(combined_tt[1:][((combined_tt[:-1]-combined_tt[1:])>=0)])
-
-	batch_t_bias = torch.stack(batch_t_bias) # (n_batch, )
-	batch_t_bias = utils.normalize_masked_tp(batch_t_bias, att_min = 0, att_max = time_max)
-
-	data_dict = {
-		"data": combined_vals, # (n_batch, T, D)
-		"time_steps": combined_tt, # (T, )
-		"mask": combined_mask, # (n_batch, T, D)
-		# "labels": combined_labels
-		}
-
-	data_dict = utils.split_and_subsample_batch(data_dict, args, n_observed_tp)
-
-	# data_dict["observed_tp"] = data_dict["observed_tp"] + batch_t_bias
-	# data_dict["tp_to_predict"] = data_dict["tp_to_predict"] + batch_t_bias
-	# print(data_dict["observed_tp"].max(), data_dict["observed_tp"].min())
-	# print(data_dict["tp_to_predict"].max(), data_dict["tp_to_predict"].min())
-	
-	return data_dict
-
-
-
-def USHCN_variable_time_collate_fn_CRU(batch, args, device = torch.device("cpu"), data_type = "train", 
-	data_min = None, data_max = None, time_max = None):
-	"""
-	Expects a batch of time series data in the form of (record_id, tt, vals, mask) where
-		- record_id is a patient id
-		- tt is a (T, ) tensor containing T time values of observations.
-		- vals is a (T, D) tensor containing observed values for D variables.
-		- mask is a (T, D) tensor containing 1 where values were observed and 0 otherwise.
-	Returns:
-		batch_tt: (B, L) the batch contains a maximal L time values of observations.
-		batch_vals: (B, L, D) tensor containing the observed values.
-		batch_mask: (B, L, D) tensor containing 1 where values were observed and 0 otherwise.
-	"""
-
-	# n_observed_tps = []
-	time_points = []
-	obs = []
-	mask_obs = [] 
-
-	for b, (record_id, tt, vals, mask, t_bias) in enumerate(batch):
-		# n_observed_tp = torch.lt(tt, args.history).sum()
-		# n_observed_tps.append(n_observed_tp)
-		time_points.append(tt + t_bias)
-		obs.append(vals)
-		mask_obs.append(mask)
-
-	time_points = pad_sequence(time_points, batch_first=True).to(dtype=torch.float64)
-	obs = pad_sequence(obs, batch_first=True).to(dtype=torch.float64)
-	mask_obs = pad_sequence(mask_obs, batch_first=True)
-	mask_targets = mask_obs.clone()
-	obs_valid = ~torch.all(mask_obs == 0, dim=-1)
-
-	targets = obs.clone()
-	
-	# observed_tp = utils.normalize_masked_tp(observed_tp, att_min = 0, att_max = time_max)
-	# predicted_tp = utils.normalize_masked_tp(predicted_tp, att_min = 0, att_max = time_max)
-		
-	data_dict = {"obs": obs,
-			"time_points": time_points,
-			"mask_obs": mask_obs,
-			"targets": targets,
-			"mask_targets": mask_targets,
-			"obs_valid": obs_valid,
-			}
-	
-	return data_dict
-
 
 
 def USHCN_get_seq_length(args, records):

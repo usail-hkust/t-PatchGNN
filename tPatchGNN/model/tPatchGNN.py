@@ -7,7 +7,6 @@ from model.Transformer_EncDec import Encoder, EncoderLayer
 from model.SelfAttention_Family import FullAttention, AttentionLayer
 
 import lib.utils as utils
-from lib.encoder_decoder import *
 from lib.evaluation import *
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -50,7 +49,6 @@ class gcn(nn.Module):
 		# a (B, M, N, N)
 		out = [x]
 		for a in support:
-			# print(x.shape, a.shape)
 			x1 = self.nconv(x,a)
 			out.append(x1)
 			for k in range(2, self.order + 1):
@@ -60,7 +58,6 @@ class gcn(nn.Module):
 
 		h = torch.cat(out, dim=1) # concat x and x_conv
 		h = self.mlp(h)
-		# h = F.dropout(h, self.dropout, training=self.training)
 		return F.relu(h)
 
 class PositionalEncoding(nn.Module):
@@ -80,7 +77,6 @@ class PositionalEncoding(nn.Module):
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        # print(x.shape, self.pe[:, :x.size(1), :].shape, self.pe.shape)
         x = x + self.pe[:, :x.size(1), :]
         return x
 	
@@ -113,10 +109,6 @@ class tPatchGNN(nn.Module):
 				nn.ReLU(inplace=True),
 				nn.Linear(ttcn_dim, input_dim*ttcn_dim, bias=True))
 		self.T_bias = nn.Parameter(torch.randn(1, ttcn_dim))
-		# nn.init.normal_(self.T_bias.data)
-		# nn.init.kaiming_normal_(self.T_bias.data, mode='fan_out', nonlinearity='relu')
-		# self.leakyrelu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
-
 		
 		d_model = args.hid_dim
 		## Transformer
@@ -124,9 +116,7 @@ class tPatchGNN(nn.Module):
 		self.transformer_encoder = nn.ModuleList()
 		for _ in range(self.n_layer):
 			encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=args.nhead, batch_first=True)
-			self.transformer_encoder.append(nn.TransformerEncoder(encoder_layer, num_layers=args.tf_layer))
-			# self.transformer_encoder = AttentionLayer(FullAttention(), d_model, args.nhead)
-			
+			self.transformer_encoder.append(nn.TransformerEncoder(encoder_layer, num_layers=args.tf_layer))			
 
 		### Inter-time series modeling ###
 		self.supports_len = 0
@@ -140,10 +130,6 @@ class tPatchGNN(nn.Module):
 
 		self.nodevec1 = nn.Parameter(torch.randn(self.N, nodevec_dim).cuda(), requires_grad=True)
 		self.nodevec2 = nn.Parameter(torch.randn(nodevec_dim, self.N).cuda(), requires_grad=True)
-		# nn.init.normal_(self.nodevec1.data)
-		# nn.init.normal_(self.nodevec2.data)
-		# nn.init.kaiming_normal_(self.nodevec1.data, mode='fan_out', nonlinearity='relu')
-		# nn.init.kaiming_normal_(self.nodevec2.data, mode='fan_out', nonlinearity='relu')
 
 		self.nodevec_linear1 = nn.ModuleList()
 		self.nodevec_linear2 = nn.ModuleList()
@@ -154,12 +140,10 @@ class tPatchGNN(nn.Module):
 			self.nodevec_linear2.append(nn.Linear(args.hid_dim, nodevec_dim))
 			self.nodevec_gate1.append(nn.Sequential(
 				nn.Linear(args.hid_dim+nodevec_dim, 1),
-				# nn.Linear(args.hid_dim+nodevec_dim, nodevec_dim),
 				nn.Tanh(),
 				nn.ReLU()))
 			self.nodevec_gate2.append(nn.Sequential(
 				nn.Linear(args.hid_dim+nodevec_dim, 1),
-				# nn.Linear(args.hid_dim+nodevec_dim, nodevec_dim),
 				nn.Tanh(),
 				nn.ReLU()))
 			
@@ -168,10 +152,6 @@ class tPatchGNN(nn.Module):
 		self.gconv = nn.ModuleList() # gragh conv
 		for _ in range(self.n_layer):
 			self.gconv.append(gcn(d_model, d_model, dropout, support_len=self.supports_len, order=args.hop))
-
-		# self.bn = nn.ModuleList()
-		# for _ in range(self.n_layer):
-		# 	self.bn.append(nn.BatchNorm2d(args.hid_dim))
 
 		### Encoder output layer ###
 		self.outlayer = args.outlayer
@@ -204,19 +184,14 @@ class tPatchGNN(nn.Module):
 		# mask_X: shape (B*N*M, L, 1)
 
 		N, Lx, _ = mask_X.shape
-		# assert not torch.any(torch.isnan(X_int))
 		Filter = self.Filter_Generators(X_int) # (N, Lx, F_in*ttcn_dim)
-		# assert not torch.any(torch.isnan(Filter))
 		Filter_mask = Filter * mask_X + (1 - mask_X) * (-1e8)
 		# normalize along with sequence dimension
 		Filter_seqnorm = F.softmax(Filter_mask, dim=-2)  # (N, Lx, F_in*ttcn_dim)
 		Filter_seqnorm = Filter_seqnorm.view(N, Lx, self.ttcn_dim, -1) # (N, Lx, ttcn_dim, F_in)
 		X_int_broad = X_int.unsqueeze(dim=-2).repeat(1, 1, self.ttcn_dim, 1)
 		ttcn_out = torch.sum(torch.sum(X_int_broad * Filter_seqnorm, dim=-3), dim=-1) # (N, ttcn_dim)
-		# print(mask_X.shape, Filter_seqnorm.shape, ttcn_out.shape)
 		h_t = torch.relu(ttcn_out + self.T_bias) # (N, ttcn_dim)
-		# h_t = self.leakyrelu(ttcn_out + self.T_bias) # (N, ttcn_dim)
-		# h_t = torch.tanh(ttcn_out + self.T_bias) # (N, ttcn_dim)
 		return h_t
 
 	def IMTS_Model(self, x, mask_X):
@@ -224,13 +199,11 @@ class tPatchGNN(nn.Module):
 		x (B*N*M, L, F)
 		mask_X (B*N*M, L, 1)
 		"""
-		# print(mask_X[...,0])
 		# mask for the patch
 		mask_patch = (mask_X.sum(dim=1) > 0) # (B*N*M, 1)
 
 		### TTCN for patch modeling ###
 		x_patch = self.TTCN(x, mask_X) # (B*N*M, hid_dim-1)
-		# assert not torch.any(torch.isnan(x))
 		x_patch = torch.cat([x_patch, mask_patch],dim=-1) # (B*N*M, hid_dim)
 		x_patch = x_patch.view(self.batch_size, self.N, self.M, -1) # (B, N, M, hid_dim)
 		B, N, M, D = x_patch.shape
@@ -246,16 +219,10 @@ class tPatchGNN(nn.Module):
 			x = self.ADD_PE(x)
 			x = self.transformer_encoder[layer](x).view(x_patch.shape) # (B, N, M, F)
 
-			### unidirectional mask
-			# attn_mask = (torch.tril(torch.ones(M, M)) == 0).to(self.device)
-			# x_tf = self.transformer_encoder(x_tf, mask=attn_mask).view(x_patch.shape) # (B, N, M, F)
-			# assert not torch.any(torch.isnan(x))
-
 			### GNN for inter-time series modeling ###
-			### gated adaptive graph learning ###
+			### time-adaptive graph structure learning ###
 			nodevec1 = self.nodevec1.view(1, 1, N, self.nodevec_dim).repeat(B, M, 1, 1)
 			nodevec2 = self.nodevec2.view(1, 1, self.nodevec_dim, N).repeat(B, M, 1, 1)
-			# print(x.shape, nodevec1.shape, nodevec2.shape)
 			x_gate1 = self.nodevec_gate1[layer](torch.cat([x, nodevec1.permute(0, 2, 1, 3)], dim=-1))
 			x_gate2 = self.nodevec_gate2[layer](torch.cat([x, nodevec2.permute(0, 3, 1, 2)], dim=-1))
 			x_p1 = x_gate1 * self.nodevec_linear1[layer](x) # (B, M, N, 10)
@@ -264,24 +231,14 @@ class tPatchGNN(nn.Module):
 			nodevec2 = nodevec2 + x_p2.permute(0,2,3,1) # (B, M, 10, N)
 
 			adp = F.softmax(F.relu(torch.matmul(nodevec1, nodevec2)), dim=-1) # (B, M, N, N) used
-			# adp = F.softmax(torch.matmul(nodevec1, nodevec2), dim=-1) # (B, M, N, N) # try this one with ct gcn in ushcn
-			# adp = F.relu(F.tanh(torch.matmul(d_nodevec1, d_nodevec2))) # (B, M, N, N)
-			# adp = adp / (adp.sum(dim=-2, keepdim=True)+1e-8)
-			# adp = F.sigmoid(torch.matmul(d_nodevec1, d_nodevec2)) # (B, M, N, N)
-			# print(d_nodevec1.shape, d_nodevec2.shape, adp.shape)
 			new_supports = self.supports + [adp]
 
 			# input x shape (B, F, N, M)
 			x = self.gconv[layer](x.permute(0,3,1,2), new_supports) # (B, F, N, M)
-			# assert not torch.any(torch.isnan(x))
 			x = x.permute(0, 2, 3, 1) # (B, N, M, F)
 
 			if(layer > 0): # residual addition
 				x = x_last + x 
-
-			# x = x.permute(0, 3, 1, 2) # (B, F, N, M)
-			# x = self.bn[layer](x)
-			# x = x.permute(0, 2, 3, 1) # (B, N, M, F)
 
 		### Output layer ###
 		if(self.outlayer == "CNN"):
@@ -310,26 +267,21 @@ class tPatchGNN(nn.Module):
         mask_X (B*N*M, L, 1)
         """
 
-		# print("data shape:", time_steps_to_predict.shape, X.shape, truth_time_steps.shape, mask.shape)
 		B, M, L_in, N = X.shape
 		self.batch_size = B
 		X = X.permute(0, 3, 1, 2).reshape(-1, L_in, 1) # (B*N*M, L, 1)
 		truth_time_steps = truth_time_steps.permute(0, 3, 1, 2).reshape(-1, L_in, 1)  # (B*N*M, L, 1)
 		mask = mask.permute(0, 3, 1, 2).reshape(-1, L_in, 1)  # (B*N*M, L, 1)
 		te_his = self.LearnableTE(truth_time_steps) # (B*N*M, L, F_te)
-		# print(time.max(), time.mean(), time.min(), time.shape, te.shape)
 
 		X = torch.cat([X, te_his], dim=-1)  # (B*N*M, L, F)
-		# print(X.shape, te_his.shape)
 
 		### *** a encoder to model irregular time series
-		# assert not torch.any(torch.isnan(X))
 		h = self.IMTS_Model(X, mask) # (B, N, hid_dim)
 
 		""" Decoder """
 		L_pred = time_steps_to_predict.shape[-1]
 		h = h.unsqueeze(dim=-2).repeat(1, 1, L_pred, 1) # (B, N, Lp, F)
-		# print(h.shape, time_steps_to_predict.shape)
 		time_steps_to_predict = time_steps_to_predict.view(B, 1, L_pred, 1).repeat(1, N, 1, 1) # (B, N, Lp, 1)
 		te_pred = self.LearnableTE(time_steps_to_predict) # (B, N, Lp, F_te)
 
@@ -337,8 +289,6 @@ class tPatchGNN(nn.Module):
 
 		# (B, N, Lp, F) -> (B, N, Lp, 1) -> (1, B, Lp, N)
 		outputs = self.decoder(h).squeeze(dim=-1).permute(0, 2, 1).unsqueeze(dim=0) 
-		# print(outputs.shape)
-		# assert not torch.any(torch.isnan(outputs))
 
 		return outputs # (1, B, Lp, N)
 

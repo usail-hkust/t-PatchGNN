@@ -3,7 +3,6 @@ patience=10
 gpu=0
 
 for seed in {1..5}
-# for seed in 1
 do
     python run_models.py \
     --dataset physionet --state 'def' --history 24 \

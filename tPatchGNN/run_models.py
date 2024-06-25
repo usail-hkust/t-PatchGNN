@@ -21,11 +21,11 @@ import torch.nn as nn
 import torch.optim as optim
 
 import lib.utils as utils
-from lib.plotting import *
+# from lib.plotting import *
 from lib.parse_datasets import parse_datasets
-from model.patchmtgnn import *
+from model.tPatchGNN import *
 
-parser = argparse.ArgumentParser('ITS Forecasting')
+parser = argparse.ArgumentParser('IMTS Forecasting')
 
 parser.add_argument('--state', type=str, default='def')
 parser.add_argument('-n',  type=int, default=int(1e8), help="Size of the dataset")
@@ -44,7 +44,6 @@ parser.add_argument('--lr',  type=float, default=1e-3, help="Starting learning r
 parser.add_argument('--w_decay', type=float, default=0.0, help="weight decay.")
 parser.add_argument('-b', '--batch_size', type=int, default=32)
 
-parser.add_argument('--viz', action='store_true', help="Show plots while training")
 parser.add_argument('--save', type=str, default='experiments/', help="Path for save checkpoints")
 parser.add_argument('--load', type=str, default=None, help="ID of the experiment to load for evaluation. If None, run a new experiment.")
 parser.add_argument('--seed', type=int, default=1, help="Random seed")
@@ -98,15 +97,10 @@ if __name__ == '__main__':
 	model = tPatchGNN(args).to(args.device)
 
 	##################################################################
-
-	# if args.viz:
-	# 	viz = Visualizations(device)
-
-	##################################################################
 	
-	#Load checkpoint and evaluate the model
+	# # Load checkpoint and evaluate the model
 	# if args.load is not None:
-	# 	utils.get_ckpt_model(ckpt_path, model, device)
+	# 	utils.get_ckpt_model(ckpt_path, model, args.device)
 	# 	exit()
 
 	##################################################################
@@ -140,8 +134,6 @@ if __name__ == '__main__':
 		for _ in range(num_batches):
 			optimizer.zero_grad()
 			batch_dict = utils.get_next_batch(data_obj["train_dataloader"])
-			# print(batch_dict["tp_to_predict"].shape, batch_dict["observed_data"].shape, \
-		 	# 	batch_dict["observed_tp"].shape, batch_dict["observed_mask"].shape)
 			train_res = compute_all_losses(model, batch_dict)
 			train_res["loss"].backward()
 			optimizer.step()

@@ -1,20 +1,13 @@
-###########################
-# Latent ODEs for Irregularly-Sampled Time Series
-# Author: Yulia Rubanova
-###########################
-
 import gc
 import numpy as np
 import sklearn as sk
 import numpy as np
-#import gc
 import torch
 import torch.nn as nn
 from torch.nn.functional import relu
 
 import lib.utils as utils
 from lib.utils import get_device
-from lib.encoder_decoder import *
 
 from torch.distributions.multivariate_normal import MultivariateNormal
 from torch.distributions.normal import Normal
@@ -47,8 +40,6 @@ def poisson_log_likelihood(masked_log_lambdas, masked_data, indices, int_lambdas
 
 
 def compute_binary_CE_loss(label_predictions, mortality_label):
-	#print("Computing binary classification loss: compute_CE_loss")
-
 	mortality_label = mortality_label.reshape(-1)
 
 	if len(label_predictions.size()) == 1:
@@ -81,8 +72,6 @@ def compute_binary_CE_loss(label_predictions, mortality_label):
 
 
 def compute_multiclass_CE_loss(label_predictions, true_label, mask):
-	#print("Computing multi-class classification loss: compute_multiclass_CE_loss")
-
 	if (len(label_predictions.size()) == 3):
 		label_predictions = label_predictions.unsqueeze(0)
 
@@ -133,8 +122,6 @@ def compute_multiclass_CE_loss(label_predictions, true_label, mask):
 	# # divide by number of patients in a batch
 	# ce_loss = ce_loss / n_traj_samples
 	return ce_loss
-
-
 
 
 def compute_masked_likelihood(mu, data, mask, likelihood_func):
@@ -275,7 +262,6 @@ def compute_error(truth, pred_y, mask, func, reduce, norm_dict=None):
 	n_traj_samples, n_batch, n_tp, n_dim = pred_y.size()
 	truth_repeated = truth.repeat(pred_y.size(0), 1, 1, 1)
 	mask = mask.repeat(pred_y.size(0), 1, 1, 1)
-	# print(truth.shape, truth_repeated.shape, mask.shape)
 
 	if(func == "MSE"):
 		error = ((truth_repeated - pred_y)**2) * mask # (n_traj_samples, n_batch, n_tp, n_dim)
@@ -299,12 +285,6 @@ def compute_error(truth, pred_y, mask, func, reduce, norm_dict=None):
 
 	error_var_sum = error.reshape(-1, n_dim).sum(dim=0) # (n_dim, )
 	mask_count = mask.reshape(-1, n_dim).sum(dim=0) # (n_dim, )
-	
-	# if(func == "MAPE"):
-	# 	print("error_var_sum", error_var_sum)
-	# 	print("mask_count", mask_count)
-	# print("mask_count:", mask_count.max().item(), mask_count.min().item(), mask_count.mean().item())
-	# print("error_var_sum:", error_var_sum.max().item(), error_var_sum.min().item(), error_var_sum.mean().item())
 
 	if(reduce == "mean"):
 		### 1. Compute avg error of each variable first 
@@ -341,7 +321,6 @@ def compute_all_losses(model, batch_dict):
 	mae = compute_error(batch_dict["data_to_predict"], pred_y, mask = batch_dict["mask_predicted_data"], func="MAE", reduce="mean") # a scalar
 
 	################################
-	# print(batch_dict["data_to_predict"].shape, pred_y.shape, batch_dict["mask_predicted_data"].shape, mse, mse.shape)
 	# mse loss
 	loss = mse
 
@@ -366,8 +345,6 @@ def evaluation(model, dataloader, n_batches):
 
 	for _ in range(n_batches):
 		batch_dict = utils.get_next_batch(dataloader)
-		# bs = batch_dict["observed_data"].shape[0]
-		# print(batch_dict["observed_data"].shape)
 
 		pred_y = model.forecasting(batch_dict["tp_to_predict"], 
 			batch_dict["observed_data"], batch_dict["observed_tp"], 
@@ -391,10 +368,8 @@ def evaluation(model, dataloader, n_batches):
 		n_eval_samples += mask_count
 		n_eval_samples_mape += mask_count_mape
 
-	# print(n_eval_samples)
 	n_avai_var = torch.count_nonzero(n_eval_samples)
 	n_avai_var_mape = torch.count_nonzero(n_eval_samples_mape)
-	# print(n_eval_samples.shape, n_avai_var)
 	
 	### 1. Compute avg error of each variable first
 	### 2. Compute avg error along the variables 
@@ -408,8 +383,6 @@ def evaluation(model, dataloader, n_batches):
 		if isinstance(var, torch.Tensor):
 			var = var.item()
 		total_results[key] = var
-
-	# print(total_results, n_eval_samples.long(), n_avai_var)
 
 	return total_results
 

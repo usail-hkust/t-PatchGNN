@@ -37,8 +37,6 @@ class PersonActivity(object):
 		 "standing up from sit on grnd"
 	]
 
-	#label_dict = {k: i for i, k in enumerate(label_names)}
-
 	#Merge similar labels into one class
 	label_dict = {
 		"walking": 0,
@@ -226,10 +224,8 @@ def Activity_time_chunk(data, args, device):
 	history = args.history # ms
 	pred_window = args.pred_window # ms
 	for b, (record_id, tt, vals, mask) in enumerate(data):
-		# print(tt.shape, vals.shape, mask.shape)
 		t_max = int(tt.max())
 		for st in range(0, t_max - history, pred_window):
-			# print(st, t_max)
 			et = st + history + pred_window
 			if(et >= t_max):
 				idx = torch.where((tt >= st) & (tt <= et))[0]
@@ -254,7 +250,6 @@ def Activity_get_seq_length(args, records):
 	median_len = lens.median()
 
 	return max_input_len, max_pred_len, median_len
-
 
 
 

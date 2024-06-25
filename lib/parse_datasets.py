@@ -6,11 +6,9 @@ import torch
 import torch.nn as nn
 
 import lib.utils as utils
-from lib.generate_timeseries import Periodic_1d
 from torch.distributions import uniform
 
 from torch.utils.data import DataLoader
-from lib.mujoco_physics import HopperPhysics
 from lib.physionet import *
 from lib.ushcn import *
 from lib.mimic import MIMIC
@@ -43,24 +41,16 @@ def parse_datasets(args, patch_ts=False, length_stat=False):
 		test_record_ids = [record_id for record_id, tt, vals, mask in test_data]
 		print("Test record ids (first 20):", test_record_ids[:20])
 		print("Test record ids (last 20):", test_record_ids[-20:])
-		# print(train_data[0][0], test_data[0][0])
 
 		record_id, tt, vals, mask = train_data[0]
 
-		n_samples = len(total_dataset)
 		input_dim = vals.size(-1)
 
 		batch_size = min(min(len(seen_data), args.batch_size), args.n)
 		data_min, data_max, time_max = get_data_min_max(seen_data, device) # (n_dim,), (n_dim,)
-		# print(data_min.shape, data_min, data_min.min())
-		# print(data_max.shape, data_max, data_max.min())
 
 		if(patch_ts):
 			collate_fn = patch_variable_time_collate_fn
-		elif(args.model == "CRU"):
-			collate_fn = variable_time_collate_fn_CRU
-		elif(args.model == "latent_ode"):
-			collate_fn = variable_time_collate_fn_ODE
 		else:
 			collate_fn = variable_time_collate_fn
 
@@ -113,23 +103,15 @@ def parse_datasets(args, patch_ts=False, length_stat=False):
 		test_record_ids = [record_id for record_id, tt, vals, mask in test_data]
 		print("Test record ids (first 20):", test_record_ids[:20])
 		print("Test record ids (last 20):", test_record_ids[-20:])
-		# print(train_data[0][0], test_data[0][0])
 
 		record_id, tt, vals, mask = train_data[0]
 
-		n_samples = len(total_dataset)
 		input_dim = vals.size(-1)
 
 		data_min, data_max, time_max = get_data_min_max(seen_data, device) # (n_dim,), (n_dim,)
-		# print(data_min.shape, data_min, data_min.min())
-		# print(data_max.shape, data_max, data_max.min())
 
 		if(patch_ts):
 			collate_fn = USHCN_patch_variable_time_collate_fn
-		elif(args.model == "CRU"):
-			collate_fn = USHCN_variable_time_collate_fn_CRU
-		elif(args.model == "latent_ode"):
-			collate_fn = USHCN_variable_time_collate_fn_ODE
 		else:
 			collate_fn = USHCN_variable_time_collate_fn
 
@@ -185,26 +167,18 @@ def parse_datasets(args, patch_ts=False, length_stat=False):
 		test_record_ids = [record_id for record_id, tt, vals, mask in test_data]
 		print("Test record ids (first 20):", test_record_ids[:20])
 		print("Test record ids (last 20):", test_record_ids[-20:])
-		# print(train_data[0][0], test_data[0][0])
 
 		record_id, tt, vals, mask = train_data[0]
 
-		n_samples = len(total_dataset)
 		input_dim = vals.size(-1)
 
 		batch_size = min(min(len(seen_data), args.batch_size), args.n)
 		data_min, data_max, _ = get_data_min_max(seen_data, device) # (n_dim,), (n_dim,)
 		time_max = torch.tensor(args.history + args.pred_window)
 		print('manual set time_max:', time_max)
-		# print(data_min.shape, data_min, data_min.min())
-		# print(data_max.shape, data_max, data_max.min())
 
 		if(patch_ts):
 			collate_fn = patch_variable_time_collate_fn
-		elif(args.model == "CRU"):
-			collate_fn = variable_time_collate_fn_CRU
-		elif(args.model == "latent_ode"):
-			collate_fn = variable_time_collate_fn_ODE
 		else:
 			collate_fn = variable_time_collate_fn
 
