@@ -84,7 +84,6 @@ class PhysioNet(object):
 			dirname = os.path.join(self.raw_folder, filename.split('.')[0])
 			patients = []
 			total = 0
-			cnt = 0
 			for txtfile in os.listdir(dirname):
 				record_id = txtfile.split('.')[0]
 				with open(os.path.join(dirname, txtfile)) as f:
@@ -124,9 +123,6 @@ class PhysioNet(object):
 							nobs[-1][self.params_dict[param]] += 1
 						else:
 							assert (param == 'RecordID' or param ==''), 'Read unexpected param {}'.format(param)
-							if(param != 'RecordID'):
-								cnt += 1
-								print(cnt, param, l)
 
 				tt = torch.tensor(tt).to(self.device)
 				vals = torch.stack(vals).to(self.device)
