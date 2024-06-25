@@ -51,3 +51,12 @@ python run_models.py \
 - `seed`: the seed for parameter initialization.
 - `history`: the length of the time for observation, the rest will be used for forecasting. Please note that different datasets have varying time spans and levels of granularity.
 
+## Citation
+
+```shell
+@inproceedings{zhangirregular,
+  title={Irregular Multivariate Time Series Forecasting: A Transformable Patching Graph Neural Networks Approach},
+  author={Zhang, Weijia and Yin, Chenlong and Liu, Hao and Zhou, Xiaofang and Xiong, Hui},
+  booktitle={Forty-first International Conference on Machine Learning}
+}
+```
