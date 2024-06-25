@@ -1,9 +1,0 @@
-/data/yinchenlong/IMTSF_open/tPatchGNN/run_models.py
-2024-06-26 04:26:53
-run_models.py --dataset physionet --state def --history 24 --patience 10 --batch_size 32 --lr 1e-3 --patch_size 8 --stride 8 --nhead 1 --tf_layer 1 --nlayer 1 --te_dim 10 --node_dim 10 --hid_dim 64 --outlayer Linear --seed 1 --gpu 0
-Namespace(state='def', n=100000000, hop=1, nhead=1, tf_layer=1, nlayer=1, epoch=1000, patience=10, history=24, patch_size=8.0, stride=8.0, logmode='a', lr=0.001, w_decay=0.0, batch_size=32, save='experiments/', load=None, seed=1, dataset='physionet', quantization=0.0, model='tPatchGNN', outlayer='Linear', hid_dim=64, te_dim=10, node_dim=10, gpu='0', npatch=3, device=device(type='cuda'), PID=24490, ndim=41)
-- Epoch 000, ExpID 76147
-Train - Loss (one batch): 0.00814
-Val - Loss, MSE, RMSE, MAE, MAPE: 0.00742, 0.00742, 0.08616, 0.05085, 231.00%
-Test - Best epoch, Loss, MSE, RMSE, MAE, MAPE: 0, 0.00692, 0.00692, 0.08319, 0.04992, 252.09%
-Time spent: 16.54s
