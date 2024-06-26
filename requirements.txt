@@ -1,8 +1,7 @@
-numpy
+numpy==1.24.4
 scikit-learn
 tqdm
 torch==2.0.0
-pandas
-matplotlib
+pandas==1.5.3
 psycopg2-binary
-scipy
+scipy==1.11.3
