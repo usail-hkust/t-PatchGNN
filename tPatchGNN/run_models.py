@@ -16,7 +16,6 @@ import torch.nn as nn
 import torch.optim as optim
 
 import lib.utils as utils
-# from lib.plotting import *
 from lib.parse_datasets import parse_datasets
 from model.tPatchGNN import *
 
