@@ -4,7 +4,7 @@ This is an official implementation of *Irregular Multivariate Time Series Foreca
 
 ## Requirements
 
-tPatchGNN has tested using Python 3.9.
+tPatchGNN has been tested using Python 3.9.
 
 To have consistent libraries and their versions, you can install needed dependencies for this project running the following command:
 
