@@ -1,0 +1,9 @@
+/data/yinchenlong/IMTSF_open/tPatchGNN/run_models.py
+2024-06-26 16:17:49
+run_models.py --dataset activity --state def --history 3000 --patience 10 --batch_size 32 --lr 1e-3 --patch_size 300 --stride 300 --nhead 1 --tf_layer 1 --nlayer 1 --te_dim 10 --node_dim 10 --hid_dim 32 --outlayer Linear --seed 1 --gpu 0
+Namespace(state='def', n=100000000, hop=1, nhead=1, tf_layer=1, nlayer=1, epoch=1000, patience=10, history=3000, patch_size=300.0, stride=300.0, logmode='a', lr=0.001, w_decay=0.0, batch_size=32, save='experiments/', load=None, seed=1, dataset='activity', quantization=0.0, model='tPatchGNN', outlayer='Linear', hid_dim=32, te_dim=10, node_dim=10, gpu='0', npatch=10, device=device(type='cuda'), PID=12584, pred_window=1000, ndim=12)
+- Epoch 000, ExpID 26502
+Train - Loss (one batch): 0.01272
+Val - Loss, MSE, RMSE, MAE, MAPE: 0.00980, 0.00980, 0.09902, 0.07587, 20.08%
+Test - Best epoch, Loss, MSE, RMSE, MAE, MAPE: 0, 0.00916, 0.00916, 0.09568, 0.07429, 17.51%
+Time spent: 6.25s

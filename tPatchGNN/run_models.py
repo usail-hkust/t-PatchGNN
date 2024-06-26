@@ -2,11 +2,6 @@ import os
 import sys
 sys.path.append("..")
 
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot
-import matplotlib.pyplot as plt
-
 import time
 import datetime
 import argparse
