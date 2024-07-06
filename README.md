@@ -1,10 +1,10 @@
-# tPatchGNN
+# t-PatchGNN
 
-This is an official implementation of *Irregular Multivariate Time Series Forecasting: A Transformable Patching Graph Neural Networks Approach*.
+This is an official implementation of [*Irregular Multivariate Time Series Forecasting: A Transformable Patching Graph Neural Networks Approach*](https://openreview.net/pdf?id=UZlMXUGI6e).
 
 ## Requirements
 
-tPatchGNN has been tested using Python 3.9.
+t-PatchGNN has been tested using Python 3.9.
 
 To have consistent libraries and their versions, you can install needed dependencies for this project running the following command:
 
