@@ -1,6 +1,6 @@
 # t-PatchGNN
 
-This is an official implementation of [*Irregular Multivariate Time Series Forecasting: A Transformable Patching Graph Neural Networks Approach*](https://openreview.net/pdf?id=UZlMXUGI6e).
+This is an official implementation of **ICML 24** paper [*Irregular Multivariate Time Series Forecasting: A Transformable Patching Graph Neural Networks Approach*](https://openreview.net/pdf?id=UZlMXUGI6e).
 
 ## Requirements
 
