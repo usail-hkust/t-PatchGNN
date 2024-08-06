@@ -54,9 +54,10 @@ python run_models.py \
 ## Citation
 
 ```shell
-@inproceedings{zhangirregular,
+@inproceedings{zhangirregular2024,
   title={Irregular Multivariate Time Series Forecasting: A Transformable Patching Graph Neural Networks Approach},
   author={Zhang, Weijia and Yin, Chenlong and Liu, Hao and Zhou, Xiaofang and Xiong, Hui},
-  booktitle={Forty-first International Conference on Machine Learning}
+  booktitle={Forty-first International Conference on Machine Learning},
+  year={2024}
 }
 ```
