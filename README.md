@@ -2,7 +2,7 @@ This is an official implementation of **ICML 24** paper [*Irregular Multivariate
 
 ## New Benchmark
 
-We build a comprehensive new benchmark for the problem of **Irregular Multivariate Time Series Forecasting**, including four scientific datasets covering areas of *healthcare*, *biomechanics*, and *climate science*. 
+We build a new comprehensive benchmark for the problem of **Irregular Multivariate Time Series Forecasting**, including four scientific datasets covering areas of *healthcare*, *biomechanics*, and *climate science*. 
 
 For *Physionet* and *Human Activity*, our code will automatically download the raw data and preprocess them.
 
