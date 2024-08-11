@@ -14,7 +14,7 @@ For *MIMIC*, because of the [PhysioNet Credentialed Health Data License](https:/
 
 <!--![UFM](./data/results.png)-->
 <p align="center">
-  <img src="./data/results.png" alt="results" width="95%">
+  <img src="./data/results.png" alt="results" width="100%">
 </p>
 
 
@@ -22,7 +22,7 @@ For *MIMIC*, because of the [PhysioNet Credentialed Health Data License](https:/
 
 t-PatchGNN has been tested using Python 3.9.
 
-To have consistent libraries and their versions, you can install needed dependencies for this project running the following command:
+To have consistent libraries and their versions, you can install the needed dependencies for this project by running the following command:
 
 ```shell
 pip install -r requirements.txt
