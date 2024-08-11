@@ -12,9 +12,9 @@ For *MIMIC*, because of the [PhysioNet Credentialed Health Data License](https:/
 
 **The main results**:
 
-<!--![UFM](./figs/results.png)-->
+<!--![UFM](./data/results.png)-->
 <p align="center">
-  <img src="./figs/results.png" alt="results" width="95%">
+  <img src="./data/results.png" alt="results" width="95%">
 </p>
 
 
