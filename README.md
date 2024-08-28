@@ -1,12 +1,12 @@
 This is an official implementation of **ICML 24** paper [*Irregular Multivariate Time Series Forecasting: A Transformable Patching Graph Neural Networks Approach*](https://openreview.net/pdf?id=UZlMXUGI6e).
 
-## Problem Definition
+## IMTS Forecasting
 
-As illustrated in Figure 1(a), given a set of historical IMTS observations and forecasting queries, the IMTS forecasting problem aims to predict the values in correspondence to these queries accurately.
+As illustrated in the figure, given a set of historical Irregular Multivariate Time Series (IMTS) observations and forecasting queries, the IMTS forecasting problem aims to accurately forecast the values in correspondence to these queries.
 
 <!--![UFM](./data/problem.png)-->
 <p align="center">
-  <img src="./data/problem.png" alt="problem" width="80%">
+  <img src="./figs/problem.png" alt="problem" width="50%">
 </p>
 
 ## New Benchmark
@@ -23,16 +23,16 @@ For *MIMIC*, because of the [PhysioNet Credentialed Health Data License](https:/
 
 <!--![UFM](./data/results.png)-->
 <p align="center">
-  <img src="./data/results.png" alt="results" width="100%">
+  <img src="./figs/results.png" alt="results" width="100%">
 </p>
 
-## Model
+## t-PatchGNN
 
-The overview of t-PatchGNN is illustrated in Figure 2.
+The overview of t-PatchGNN, which initially divides each univariate irregular time series into a series of transformable patches with varying number of consecutive observations but maintains a unified time horizon resolution. Then the patching outcomes can be seamlessly modeled by Transformer and time-adaptive GNNs, which incorporate the time-varying adaptive graph structure learning (GSL), to realize an effective intra- and inter-time series modeling for IMTS. 
 
 <!--![UFM](./data/model.png)-->
 <p align="center">
-  <img src="./data/model.png" alt="model" width="90%">
+  <img src="./figs/framework.png" alt="model" width="85%">
 </p>
 
 ## Requirements
