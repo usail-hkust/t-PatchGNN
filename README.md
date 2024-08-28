@@ -1,5 +1,14 @@
 This is an official implementation of **ICML 24** paper [*Irregular Multivariate Time Series Forecasting: A Transformable Patching Graph Neural Networks Approach*](https://openreview.net/pdf?id=UZlMXUGI6e).
 
+## Problem Definition
+
+As illustrated in Figure 1(a), given a set of historical IMTS observations and forecasting queries, the IMTS forecasting problem aims to predict the values in correspondence to these queries accurately.
+
+<!--![UFM](./data/problem.png)-->
+<p align="center">
+  <img src="./data/problem.png" alt="problem" width="80%">
+</p>
+
 ## New Benchmark
 
 We build a new comprehensive benchmark for the problem of **Irregular Multivariate Time Series Forecasting**, including four scientific datasets covering areas of *healthcare*, *biomechanics*, and *climate science*. 
@@ -17,6 +26,14 @@ For *MIMIC*, because of the [PhysioNet Credentialed Health Data License](https:/
   <img src="./data/results.png" alt="results" width="100%">
 </p>
 
+## Model
+
+The overview of t-PatchGNN is illustrated in Figure 2.
+
+<!--![UFM](./data/model.png)-->
+<p align="center">
+  <img src="./data/model.png" alt="model" width="90%">
+</p>
 
 ## Requirements
 
