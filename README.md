@@ -1,5 +1,9 @@
 This is an official implementation of **ICML 24** paper [*Irregular Multivariate Time Series Forecasting: A Transformable Patching Graph Neural Networks Approach*](https://openreview.net/pdf?id=UZlMXUGI6e).
 
+
+<a href='https://openreview.net/pdf?id=UZlMXUGI6e'><img src='https://img.shields.io/badge/Paper-PDF-orange'></a> 
+<a href='https://mp.weixin.qq.com/s/KxEnJml9jP8_Zr6EeS_XYg' target='_blank'><img src='https://img.shields.io/badge/中文-博客-blue'></a>
+
 ## IMTS Forecasting
 
 As illustrated in the figure, given a set of historical Irregular Multivariate Time Series (IMTS) observations and forecasting queries, the IMTS forecasting problem aims to accurately forecast the values in correspondence to these queries.
