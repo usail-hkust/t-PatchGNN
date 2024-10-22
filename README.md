@@ -41,7 +41,7 @@ The overview of t-PatchGNN, which initially divides each univariate irregular ti
 
 ## Requirements
 
-t-PatchGNN has been tested using Python 3.9.
+t-PatchGNN has been tested using Python 3.9 and CUDA Version: 12.2
 
 To have consistent libraries and their versions, you can install the needed dependencies for this project by running the following command:
 
