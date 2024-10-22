@@ -17,9 +17,9 @@ As illustrated in the figure, given a set of historical Irregular Multivariate T
 
 We build a new comprehensive benchmark for the problem of **Irregular Multivariate Time Series Forecasting**, including four scientific datasets covering areas of *healthcare*, *biomechanics*, and *climate science*. 
 
-For *Physionet* and *Human Activity*, our code will automatically download the raw data and preprocess them.
+For *Physionet*, *Human Activity*, and *USHCN*, we have provided the processed datasets to ease the reproduction.
 
-For *USHCN*, following the [GRU-ODE-Bayes](https://github.com/edebrouwer/gru_ode_bayes/tree/master), we use the same preprocessed data `small_chunked_sporadic.csv` as the raw data.
+<!-- For *USHCN*, following the [GRU-ODE-Bayes](https://github.com/edebrouwer/gru_ode_bayes/tree/master), we use the same preprocessed data `small_chunked_sporadic.csv` as the raw data. -->
 
 For *MIMIC*, because of the [PhysioNet Credentialed Health Data License](https://physionet.org/content/mimiciii/view-dua/1.4/), you need to first request the raw database from [here](https://physionet.org/content/mimiciii/1.4/). The database version we used here is v1.4. After downloading the raw data, following the preprocessing of [Neural Flows](https://github.com/mbilos/neural-flows-experiments/blob/master/nfe/experiments/gru_ode_bayes/data_preproc/mimic_prep.ipynb), you will finally get the `full_dataset.csv` which is used as the raw data in our experiment.
 
