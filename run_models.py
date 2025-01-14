@@ -17,7 +17,7 @@ import torch.optim as optim
 
 import lib.utils as utils
 from lib.parse_datasets import parse_datasets
-from model.tPatchGNN import *
+from tPatchGNN.model.tPatchGNN import *
 
 parser = argparse.ArgumentParser('IMTS Forecasting')
 
