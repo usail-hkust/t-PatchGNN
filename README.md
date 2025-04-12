@@ -14,7 +14,7 @@ As illustrated in the figure, given a set of historical Irregular Multivariate T
 </p>
 
 ## News  🎉
-🌟 2025-04: Good news! The MIMIC dataset used in this benchmark has been published in the official PhysioNet databases. You can directly apply the processed dataset at [MIMIC-III-Ext-tPatchGNN](https://physionet.org/content/mimic-iii-ext-tpatchgnn/1.0.0/) to replicate the experiments or for your research.
+🌟 2025-04: Good news! The MIMIC dataset used in this work has been published in the official PhysioNet databases. You can directly apply the processed dataset at [MIMIC-III-Ext-tPatchGNN](https://physionet.org/content/mimic-iii-ext-tpatchgnn/1.0.0/) to replicate the experiments or for your research.
 
 
 ## New Benchmark
