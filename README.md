@@ -21,7 +21,7 @@ As illustrated in the figure, given a set of historical Irregular Multivariate T
 
 We build a new comprehensive benchmark for the problem of **Irregular Multivariate Time Series Forecasting**, including four scientific datasets covering areas of *healthcare*, *biomechanics*, and *climate science*. 
 
-For *Physionet*, *Human Activity*, and *USHCN*, we have provided the processed datasets to ease the reproduction.
+For *Physionet*, *Human Activity*, and *USHCN*, we have provided the processed datasets to ease the reproduction. (Note for *Physionet*, you need to first decompress [processed.zip](./data/physionet/processed.zip) to obtain the processed data in experiments)
 
 <!-- For *USHCN*, following the [GRU-ODE-Bayes](https://github.com/edebrouwer/gru_ode_bayes/tree/master), we use the same preprocessed data `small_chunked_sporadic.csv` as the raw data. -->
 
@@ -94,3 +94,4 @@ python run_models.py \
   year={2024}
 }
 ```
+
