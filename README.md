@@ -84,6 +84,14 @@ python run_models.py \
 - `seed`: the seed for parameter initialization.
 - `history`: the length of the time for observation, the rest will be used for forecasting. Please note that different datasets have varying time spans and levels of granularity.
 
+## License
+
+The original code in this repository is licensed under the [MIT License](LICENSE).
+
+Third-party code, dependencies, and datasets remain subject to their respective licenses and terms of use. The MIT license does not replace those terms, including the PhysioNet data access requirements described above.
+
+If you use t-PatchGNN in your research, please cite the paper below.
+
 ## Citation
 
 ```shell
